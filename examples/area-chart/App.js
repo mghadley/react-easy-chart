@@ -127,10 +127,12 @@ class AreaChartContainer extends React.Component {
                 'heightAndWidth',
                 'margin',
                 'axes',
+                'yaxesorientation',
                 'axesLabels',
                 'interpolate',
                 'axisType',
                 'grid',
+                'verticalGrid',
                 'domainRange',
                 'tickDisplay',
                 'tickAmount',
@@ -138,6 +140,7 @@ class AreaChartContainer extends React.Component {
                 'mouseHandlers',
                 'clickHandler',
                 'areaColors',
+                'areaGradient',
                 'updateData',
                 'fluid'
                 ]
@@ -149,10 +152,12 @@ class AreaChartContainer extends React.Component {
               <li><a href="#heightAndWidth">Height &amp; Width</a></li>
               <li><a href="#margin">Margin</a></li>
               <li><a href="#axes">Axes</a></li>
+              <li><a href="#yaxesorientation">Y Axis orientation</a></li>
               <li><a href="#axesLabels">Axes labels</a></li>
               <li><a href="#interpolate">Interpolate</a></li>
               <li><a href="#axisType">Axis type</a></li>
               <li><a href="#grid">Grid</a></li>
+              <li><a href="#verticalGrid">Vertical Grid</a></li>
               <li><a href="#domainRange">Domain range</a></li>
               <li><a href="#tickDisplay">Tick display</a></li>
               <li><a href="#tickAmount">Number of ticks</a></li>
@@ -160,6 +165,7 @@ class AreaChartContainer extends React.Component {
               <li><a href="#mouseHandlers">Mouse handlers</a></li>
               <li><a href="#clickHandler">Click handlers</a></li>
               <li><a href="#areaColors">Area colors</a></li>
+              <li><a href="#areaGradient">Area Gradient</a></li>
               <li><a href="#updateData">Updating the data</a></li>
               <li><a href="#fluid">Fluid</a></li>
             </Scrollspy>
@@ -291,6 +297,29 @@ data={[[{x: 1, y: 20}, {x: 2, y: 10}, {x: 3, y: 25}], [{x: 1, y: 10}, {x: 2, y: 
           height={250}
           data={[[{x: 1, y: 20}, {x: 2, y: 10}, {x: 3, y: 25}], [{x: 1, y: 10}, {x: 2, y: 12}, {x: 3, y: 4}]]}
         />
+
+        <h2 id="yaxesorientation">Y Axis orientation</h2>
+          <p>The Y axis can be placed on the right hand side by passing a boolean flag to true for yAxisOrientRight</p>
+           <pre>
+           <code dangerouslySetInnerHTML={{__html: escapeHTML(`
+<AreaChart
+ axes
+ axisLabels={{x: 'My x Axis', y: 'My y Axis'}}
+ yAxisOrientRight
+ width={450}
+ height={250}
+ data={[[{x: 1, y: 20}, {x: 2, y: 10}, {x: 3, y: 25}], [{x: 1, y: 10}, {x: 2, y: 12}, {x: 3, y: 4}]]}/>
+           `)}}
+           />
+           </pre>
+          <AreaChart
+            axes
+            axisLabels={{x: 'My x Axis', y: 'My y Axis'}}
+            yAxisOrientRight
+            width={350}
+            height={250}
+            data={[[{x: 1, y: 20}, {x: 2, y: 10}, {x: 3, y: 25}], [{x: 1, y: 10}, {x: 2, y: 12}, {x: 3, y: 4}]]}
+          />
 
         <h2 id="interpolate">Interpolate (making the Areas smooth)</h2>
         <p>The Areas drawn can be set to be interpolated by passing in an interpolated param. By default this is set to linear.
@@ -436,6 +465,40 @@ data={[[{x: 1, y: 20}, {x: 2, y: 10}, {x: 3, y: 25}], [{x: 1, y: 10}, {x: 2, y: 
           xType={'time'}
           axes
           grid
+          interpolate={'cardinal'}
+          width={750}
+          height={250}
+          data={[
+            [{x: '1-Jan-15', y: 20}, {x: '1-Feb-15', y: 10}, {x: '1-Mar-15', y: 33}, {x: '1-Apr-15', y: 45}, {x: '1-May-15', y: 15}],
+            [{x: '1-Jan-15', y: 10}, {x: '1-Feb-15', y: 15}, {x: '1-Mar-15', y: 13}, {x: '1-Apr-15', y: 15}, {x: '1-May-15', y: 10}]
+          ]}
+        />
+
+        <h2 id="verticalGrid">Vertical Grid</h2>
+        <p>A vertical grid can be added to the graph by just passing in a boolean for verticalGrid.</p>
+        <pre>
+        <code dangerouslySetInnerHTML={{__html: escapeHTML(`
+<AreaChart
+  xType={'time'}
+  axes
+  grid
+  verticalGrid
+  interpolate={'cardinal'}
+  width={750}
+  height={250}
+  data={[
+    [{x: '1-Jan-15', y: 20}, {x: '1-Feb-15', y: 10}, {x: '1-Mar-15', y: 33}, {x: '1-Apr-15', y: 45}, {x: '1-May-15', y: 15}],
+    [{x: '1-Jan-15', y: 10}, {x: '1-Feb-15', y: 15}, {x: '1-Mar-15', y: 13}, {x: '1-Apr-15', y: 15}, {x: '1-May-15', y: 10}]
+  ]}
+/>
+        `)}}
+        />
+        </pre>
+        <AreaChart
+          xType={'time'}
+          axes
+          grid
+          verticalGrid
           interpolate={'cardinal'}
           width={750}
           height={250}
@@ -760,6 +823,51 @@ mouseOutHandler() {
              [{x: '1-Jan-15', y: 10}, {x: '1-Feb-15', y: 15}, {x: '1-Mar-15', y: 13}, {x: '1-Apr-15', y: 15}, {x: '1-May-15', y: 10}]
           ]}
         />
+
+
+        <h2 id="areaGradient">noAreaGradient</h2>
+        <p>The gradient of colours of the areas can be overridden and a solid color provided instead. To do this we can pass in a noAreaGradient boolean as a prop.</p>
+
+        <pre>
+        <code dangerouslySetInnerHTML={{__html: escapeHTML(`
+<AreaChart
+  xType={'time'}
+  axes
+  xTicks={5}
+  yTicks={3}
+  dataPoints
+  grid
+  noAreaGradient
+  tickTimeDisplayFormat={'%d %m'}
+  interpolate={'cardinal'}
+  width={750}
+  height={250}
+  data={[
+  [{x: '1-Jan-15', y: 20}, {x: '1-Feb-15', y: 10}, {x: '1-Mar-15', y: 33}, {x: '1-Apr-15', y: 45}, {x: '1-May-15', y: 15}],
+  [{x: '1-Jan-15', y: 10}, {x: '1-Feb-15', y: 15}, {x: '1-Mar-15', y: 13}, {x: '1-Apr-15', y: 15}, {x: '1-May-15', y: 10}]
+  ]}
+/>
+        `)}}
+        />
+        </pre>
+        <AreaChart
+          xType={'time'}
+          axes
+          xTicks={5}
+          yTicks={3}
+          dataPoints
+          grid
+          noAreaGradient
+          tickTimeDisplayFormat={'%d %M'}
+          interpolate={'cardinal'}
+          width={750}
+          height={250}
+          data={[
+            [{x: '1-Jan-15', y: 20}, {x: '1-Feb-15', y: 10}, {x: '1-Mar-15', y: 33}, {x: '1-Apr-15', y: 45}, {x: '1-May-15', y: 15}],
+            [{x: '1-Jan-15', y: 10}, {x: '1-Feb-15', y: 15}, {x: '1-Mar-15', y: 13}, {x: '1-Apr-15', y: 15}, {x: '1-May-15', y: 10}]
+          ]}
+        />
+
 
         <h2 id="updateData">Updating the data</h2>
         <p>By selecting the button below to start the random data you can see a simulation of the performance if a data feed is passed in.

@@ -1,5 +1,8 @@
 import React from 'react';
-import { event as d3LastEvent, select, svg, layout, scale} from 'd3';
+// import { select, selectAll, svg, layout, scale, interpolate} from 'd3';
+// import { select, layout } from 'd3';
+import d3 from 'd3';
+import { event as d3LastEvent } from 'd3';
 import { createElement } from 'react-faux-dom';
 import { Style } from 'radium';
 import merge from 'lodash.merge';
@@ -13,12 +16,11 @@ const defaultStyles = {
     fontFamily: 'sans-serif',
     fontSize: '12px',
     textAnchor: 'middle',
-    fill: '#fff'
+    fill: '#000'
   }
 };
 
 export default class PieChart extends React.Component {
-
   static get propTypes() {
     return {
       data: React.PropTypes.array.isRequired,
@@ -36,7 +38,7 @@ export default class PieChart extends React.Component {
 
   static get defaultProps() {
     return {
-      size: 200,
+      size: 400,
       innerHoleSize: 0,
       padding: 2,
       labels: false,
@@ -48,60 +50,122 @@ export default class PieChart extends React.Component {
     };
   }
 
-  render() {
-    const {
-      mouseOverHandler,
-      mouseOutHandler,
-      mouseMoveHandler,
-      clickHandler,
-      styles,
-      innerHoleSize,
-      size,
-      padding,
-      labels } = this.props;
-    const outerRadius = size / 2;
-    const arc = svg.arc()
-      .outerRadius(outerRadius - padding)
-      .innerRadius((innerHoleSize / 2) - padding);
+  constructor(props) {
+    super(props);
+    this.uid = Math.floor(Math.random() * new Date().getTime());
+    this.color = d3.scale.category20();
+    this.path = null;
+    this.text = null;
+    this.pie = d3.layout.pie().value((d) => d.value).sort(null);
+    this.current = [];
+    this.currentTxt = [];
+  }
 
-    const labelArc = svg.arc()
-      .outerRadius(outerRadius - padding - ((20 * outerRadius) / 100))
-      .innerRadius(outerRadius - padding - ((20 * outerRadius) / 100));
+  componentDidMount() {
+    this.draw();
+  }
 
-    const color = scale.category20();
-    const node = createElement('svg');
+  componentDidUpdate() {
+    this.update();
+  }
 
-    const svgNode = select(node)
-      .attr('width', size)
-      .attr('height', size)
-      .append('g')
-      .attr('transform', `translate(${ outerRadius }, ${ outerRadius })`);
+  getArc() {
+    return d3.svg.arc()
+    .innerRadius(this.getInnerRadius() - this.props.padding)
+    .outerRadius(this.getRadius() - this.props.padding);
+  }
 
-    const g = svgNode.selectAll('.arc')
-      .data(layout.pie().value((d) => d.value)(this.props.data))
-      .enter().append('g');
+  getLabelArc() {
+    return d3.svg.arc()
+    .outerRadius(this.getRadius() - this.props.padding - ((20 * this.getRadius()) / 100))
+    .innerRadius(this.getRadius() - this.props.padding - ((20 * this.getRadius()) / 100));
+  }
 
-    g.append('path')
-      .attr('d', arc)
+  getRadius() {
+    return this.props.size * 0.5;
+  }
+
+  getInnerRadius() {
+    return this.props.innerHoleSize * 0.5;
+  }
+
+  draw() {
+    this.path = d3.select(`#pie_${this.uid}`)
+      .selectAll('path')
+      .data(this.pie(this.props.data))
+      .enter()
+      .append('path')
+      .attr('fill', (d, i) => d.data.color ? d.data.color : this.color(i))
+      .attr('d', this.getArc())
       .attr('class', 'chart_lines')
-      .style('fill', (d, i) => d.data.color ? d.data.color : color(i))
-      .on('mouseover', (d) => mouseOverHandler(d, d3LastEvent))
-      .on('mouseout', (d) => mouseOutHandler(d, d3LastEvent))
-      .on('mousemove', () => mouseMoveHandler(d3LastEvent))
-      .on('click', (d) => clickHandler(d, d3LastEvent));
-
-    if (labels) {
-      g.append('text')
-        .attr('transform', (d) => `translate(${labelArc.centroid(d)})`)
-        .text((d) => d.data.key)
+      .on('mouseover', (d) => this.props.mouseOverHandler(d, d3LastEvent))
+      .on('mouseout', (d) => this.props.mouseOutHandler(d, d3LastEvent))
+      .on('mousemove', () => this.props.mouseMoveHandler(d3LastEvent))
+      .on('click', (d) => this.props.clickHandler(d, d3LastEvent))
+      .each((d) => {
+        this.current.push(d);
+      });
+    if (this.props.labels) {
+      this.text = d3.select(`#labels_${this.uid}`)
+        .selectAll('text')
+        .data(this.pie(this.props.data))
+        .enter()
+        .append('text')
+        .attr('transform', (d) => `translate(${this.getLabelArc().centroid(d)})`)
+        .attr('dy', '.35em')
         .attr('class', 'chart_text')
-        .on('click', (d) => clickHandler(d, d3LastEvent));
+        .text((d) => d.data.key)
+        .each((d) => {
+          this.currentTxt.push(d);
+        });
     }
+  }
+
+  update() {
+    this.path
+      .data(this.pie(this.props.data))
+      .transition()
+      .duration(750)
+      .attrTween('d', this.tween.bind(this));
+    if (this.props.labels) {
+      this.text
+        .data(this.pie(this.props.data))
+        .transition()
+        .duration(750)
+        .attr('transform', (d) => `translate(${this.getLabelArc().centroid(d)})`);
+    }
+  }
+
+  tween(a, index) {
+    const cur = this.current[index];
+    const i = d3.interpolate(cur, a);
+    this.current[index] = a;
+    return (t) => this.getArc()(i(t));
+  }
+
+  render() {
+    const node = createElement('svg');
+    d3.select(node)
+      .attr('width', this.props.size)
+      .attr('height', this.props.size)
+      .append('g')
+      .attr('id', `pie_${this.uid}`)
+      .attr('transform', `translate(${this.getRadius()}, ${this.getRadius()})`);
+    d3.select(node)
+      .attr('width', this.props.size)
+      .attr('height', this.props.size)
+      .append('g')
+      .attr('id', `labels_${this.uid}`)
+      .attr('transform', `translate(${this.getRadius()}, ${this.getRadius()})`);
+
     const uid = Math.floor(Math.random() * new Date().getTime());
 
     return (
       <div className={`pie_chart${uid}`}>
-        <Style scopeSelector={`.pie_chart${uid}`} rules={merge({}, defaultStyles, styles)}/>
+        <Style
+          scopeSelector={`.pie_chart${uid}`}
+          rules={merge({}, defaultStyles, this.props.styles)}
+        />
         {node.toReact()}
       </div>
     );
