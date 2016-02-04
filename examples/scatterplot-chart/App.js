@@ -199,7 +199,7 @@ export default class ScatterplotContainer extends React.Component {
       showToolTip: false,
       randomDataIntervalId: null,
       windowWidth: 400,
-      componentWidth: 300
+      componentWidth: 1000
     };
     this.data = this.generateData();
   }
@@ -258,7 +258,7 @@ export default class ScatterplotContainer extends React.Component {
   }
 
   turnOnRandomData() {
-    this.setState({randomDataIntervalId: setInterval(this.updateData.bind(this), 500)});
+    this.setState({randomDataIntervalId: setInterval(this.updateData.bind(this), 1000)});
   }
 
   turnOffRandomData() {
@@ -296,6 +296,7 @@ export default class ScatterplotContainer extends React.Component {
                 'heightAndWidth',
                 'margin',
                 'axes',
+                'yaxesorientation',
                 'axesLabels',
                 'dotRadius',
                 'config',
@@ -316,6 +317,7 @@ export default class ScatterplotContainer extends React.Component {
               <li><a href="#heightAndWidth">height &amp; Width</a></li>
               <li><a href="#margin">Margin</a></li>
               <li><a href="#axes">Axes</a></li>
+              <li><a href="#yaxesorientation">Y Axis orientation</a></li>
               <li><a href="#axesLabels">Axes labels</a></li>
               <li><a href="#dotRadius">Dot Radius</a></li>
               <li><a href="#config">Config</a></li>
@@ -446,6 +448,30 @@ export default class ScatterplotContainer extends React.Component {
          />
          </pre>
          <ScatterplotChart data={bigData} axes width={480} height={270} />
+
+         <h2 id="yaxesorientation">Y Axis orientation</h2>
+           <p>The Y axis can be placed on the right hand side by passing a boolean flag to true for yAxisOrientRight</p>
+            <pre>
+            <code dangerouslySetInnerHTML={{__html: escapeHTML(`
+  <ScatterplotChart
+    data={bigData}
+    axes
+    yAxisOrientRight
+    axisLabels={{x: 'My x Axis', y: 'My y Axis'}}
+    width={480}
+    height={270}
+  />
+            `)}}
+            />
+            </pre>
+            <ScatterplotChart
+              data={bigData}
+              axes
+              yAxisOrientRight
+              axisLabels={{x: 'My x Axis', y: 'My y Axis'}}
+              width={480}
+              height={270}
+            />
          <h2 id="axesLabels">Axes labels</h2>
          <p>The axes labels (<strong>axisLabels</strong>) can be passed in for the x and y value.</p>
          <pre>
@@ -851,8 +877,10 @@ export default class ScatterplotContainer extends React.Component {
             }
           <ScatterplotChart
             data={this.data}
+            grid
             axes
             axisLabels={{x: 'My x Axis', y: 'My y Axis'}}
+            margin={{top: 10, right: 10, bottom: 30, left: 60}}
             width={480}
             height={270}
           />
@@ -860,8 +888,10 @@ export default class ScatterplotContainer extends React.Component {
           <p>Because the width and height of the chart can be passed in by a param then changes to the size of a window or container can change the chart dynamically. If you shrink your browser window width you will see the chart change in a fluid manor. You can also introduce basic break points such as removing the axes if below a certain width width.</p>
           <ScatterplotChart
             data={this.data}
+            grid
             axes={(this.state.componentWidth) > 400 ? true : false}
             axisLabels={{x: 'My x Axis', y: 'My y Axis'}}
+            margin={{top: 10, right: 10, bottom: 30, left: 60}}
             width={this.state.componentWidth}
             height={this.state.componentWidth / 2}
           />

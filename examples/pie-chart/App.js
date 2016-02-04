@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ToolTip from '../ToolTip';
 import {escapeHTML} from '../util';
-import PieChart from 'react-easy-chart/pie-chart';
+import {PieChart} from 'react-easy-chart';
 import Scrollspy from 'react-scrollspy';
 
 export default class PieChartContainer extends React.Component {
@@ -41,7 +41,7 @@ export default class PieChartContainer extends React.Component {
     }
 
     turnOnRandomData() {
-      this.setState({randomDataIntervalId: setInterval(this.updateData.bind(this), 500)});
+      this.setState({randomDataIntervalId: setInterval(this.updateData.bind(this), 1000)});
     }
 
     turnOffRandomData() {
@@ -106,7 +106,7 @@ export default class PieChartContainer extends React.Component {
                 'style',
                 'mouseHandlers',
                 'clickHandler',
-                'updateData'
+                'updatingData'
                 ]
               }
               currentClassName="active"
@@ -231,13 +231,13 @@ export default class PieChartContainer extends React.Component {
       strokeWidth: 0
     },
     '.chart_text': {
-      fontFamily: 'arial',
+      fontFamily: 'serif',
       fontSize: '15px',
       textAnchor: 'middle',
       fill: '#000'
     }
   }}
-  data={[{key: 'A', value: 100, color: '#ff0000'}, {key: 'B', value: 200, color: 'green'}, {key: 'C', value: 50, color: 'grey'}]}
+  data={[{key: 'A', value: 100, color: 'teal'}, {key: 'B', value: 200, color: 'thistle'}, {key: 'C', value: 50, color: 'tomato'}]}
 />      `)}}
        />
        </pre>
@@ -248,13 +248,13 @@ export default class PieChartContainer extends React.Component {
              strokeWidth: 0
            },
            '.chart_text': {
-             fontFamily: 'arial',
+             fontFamily: 'serif',
              fontSize: '15px',
              textAnchor: 'middle',
              fill: '#000'
            }
          }}
-         data={[{key: 'A', value: 100, color: '#ff0000'}, {key: 'B', value: 200, color: 'green'}, {key: 'C', value: 50, color: 'grey'}]}
+         data={[{key: 'A', value: 100, color: 'teal'}, {key: 'B', value: 200, color: 'thistle'}, {key: 'C', value: 50, color: 'tomato'}]}
        />
 
 
@@ -338,7 +338,7 @@ mouseOutHandler() {
          </div>
        </div>
 
-       <h2 id="updateData">Updating the data</h2>
+       <h2 id="updatingData">Updating the data</h2>
        <p>By selecting the button below to start the random data you can see a simulation of the performance if a data feed is passed in.
        React provides the functionality to only update the elements of the dom when required so will just change the path attributes.
        The data is passed in as a react param only and as soon as that data changes the chart will reflect that change automatically.</p>
