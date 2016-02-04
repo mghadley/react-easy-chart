@@ -40,31 +40,37 @@ module.exports = {
       title: 'Area Chart',
       template: path.join(__dirname, 'document_template.html'),
       filename: path.join('..', 'area-chart/index.html'),
-      excludeChunks: ['bar-chart', 'line-chart', 'pie-chart', 'scatterplot-chart']
+      excludeChunks: ['bar-chart', 'line-chart', 'pie-chart', 'scatterplot-chart', 'legend']
     }),
     new HtmlWebpackPlugin({
       title: 'Bar Chart',
       template: path.join(__dirname, 'document_template.html'),
       filename: path.join('..', 'bar-chart/index.html'),
-      excludeChunks: ['area-chart', 'line-chart', 'pie-chart', 'scatterplot-chart']
+      excludeChunks: ['area-chart', 'line-chart', 'pie-chart', 'scatterplot-chart', 'legend']
     }),
     new HtmlWebpackPlugin({
       title: 'Line Chart',
       template: path.join(__dirname, 'document_template.html'),
       filename: path.join('..', 'line-chart/index.html'),
-      excludeChunks: ['area-chart', 'bar-chart', 'pie-chart', 'scatterplot-chart']
+      excludeChunks: ['area-chart', 'bar-chart', 'pie-chart', 'scatterplot-chart', 'legend']
     }),
     new HtmlWebpackPlugin({
       title: 'Pie Chart',
       template: path.join(__dirname, 'document_template.html'),
       filename: path.join('..', 'pie-chart/index.html'),
-      excludeChunks: ['area-chart', 'line-chart', 'bar-chart', 'scatterplot-chart']
+      excludeChunks: ['area-chart', 'line-chart', 'bar-chart', 'scatterplot-chart', 'legend']
     }),
     new HtmlWebpackPlugin({
       title: 'Scatter Plot Chart',
       template: path.join(__dirname, 'document_template.html'),
       filename: path.join('..', 'scatterplot-chart/index.html'),
       excludeChunks: ['area-chart', 'line-chart', 'pie-chart', 'bar-chart']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Legend Component',
+      template: path.join(__dirname, 'document_template.html'),
+      filename: path.join('..', 'legend/index.html'),
+      excludeChunks: ['area-chart', 'line-chart', 'pie-chart', 'bar-chart', 'scatterplot-chart']
     }),
     new CopyWebpackPlugin([{
       from: path.join(__dirname, 'root-styles.css'),
