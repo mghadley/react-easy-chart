@@ -64,7 +64,7 @@ module.exports = {
       title: 'Scatter Plot Chart',
       template: path.join(__dirname, 'document_template.html'),
       filename: path.join('..', 'scatterplot-chart/index.html'),
-      excludeChunks: ['area-chart', 'line-chart', 'pie-chart', 'bar-chart']
+      excludeChunks: ['area-chart', 'line-chart', 'pie-chart', 'bar-chart', 'legend']
     }),
     new HtmlWebpackPlugin({
       title: 'Legend Component',
