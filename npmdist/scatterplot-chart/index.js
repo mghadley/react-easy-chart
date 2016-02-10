@@ -1,6 +1,6 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -35,41 +35,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-// import {event as d3LastEvent, min, max, scale, select, svg, time} from 'd3';
-
-var defaultStyle = {
-  '.line': {
-    fill: 'none',
-    strokeWidth: 1.5
-  },
-  '.axis': {
-    font: '10px arial'
-  },
-  '.axis .label': {
-    font: '14px arial'
-  },
-  '.axis path,.axis line': {
-    fill: 'none',
-    stroke: '#000',
-    'shape-rendering': 'crispEdges'
-  },
-  'x.axis path': {
-    display: 'none'
-  },
-  '.dot': {
-    stroke: '#000',
-    opacity: 0.85
-  },
-  '.tick line': {
-    stroke: 'lightgrey',
-    opacity: '0.7'
-  }
-};
 
 var parseDate = null;
 var axisMargin = 18;
 
-var ScatterplotChart = (function (_React$Component) {
+var ScatterplotChart = function (_React$Component) {
   _inherits(ScatterplotChart, _React$Component);
 
   _createClass(ScatterplotChart, null, [{
@@ -84,6 +54,7 @@ var ScatterplotChart = (function (_React$Component) {
         datePattern: _react2.default.PropTypes.string,
         yAxisOrientRight: _react2.default.PropTypes.bool,
         dotRadius: _react2.default.PropTypes.number,
+        verticalGrid: _react2.default.PropTypes.bool,
         grid: _react2.default.PropTypes.bool,
         height: _react2.default.PropTypes.number,
         useLegend: _react2.default.PropTypes.bool,
@@ -169,6 +140,7 @@ var ScatterplotChart = (function (_React$Component) {
       this.drawAxisX();
       this.drawAxisY();
       this.drawChart();
+      (0, _shared.createCircularTicks)(this.refs[this.uid]);
     }
   }, {
     key: 'componentDidUpdate',
@@ -181,6 +153,7 @@ var ScatterplotChart = (function (_React$Component) {
       this.updateAxisX();
       this.updateAxisY();
       this.updateChart();
+      (0, _shared.createCircularTicks)(this.refs[this.uid]);
     }
   }, {
     key: 'setMargin',
@@ -217,14 +190,24 @@ var ScatterplotChart = (function (_React$Component) {
         this.xAxis.tickFormat(_d.time.format(this.props.tickTimeDisplayFormat));
       }
       if (this.props.xTickNumber) this.xAxis.ticks(this.props.xTickNumber);
-      if (this.props.grid) this.xAxis.tickSize(-this.innerHeight, 6).tickPadding(12);
+
+      if (this.props.grid && this.props.verticalGrid) {
+        this.xAxis.tickSize(-this.height, 6).tickPadding(15);
+      } else {
+        this.xAxis.tickSize(0).tickPadding(15);
+      }
+
       if (this.props.xTicks) this.xAxis.ticks(this.props.xTicks);
     }
   }, {
     key: 'setYaxis',
     value: function setYaxis() {
       this.yAxis = _d.svg.axis().scale(this.y).orient(this.props.yAxisOrientRight ? 'right' : 'left');
-      if (this.props.grid) this.yAxis.tickSize(-this.innerWidth, 6).tickPadding(12);
+      if (this.props.grid) {
+        this.yAxis.tickSize(-this.innerWidth, 6).tickPadding(12);
+      } else {
+        this.yAxis.tickPadding(10);
+      }
       if (this.props.yTicks) this.yAxis.ticks(this.props.yTicks);
     }
   }, {
@@ -360,11 +343,15 @@ var ScatterplotChart = (function (_React$Component) {
         return _this2.getFill(d);
       }).style('stroke', function (d) {
         return _this2.getStroke(d);
+      }).on('mouseover', function (d) {
+        return _this2.props.mouseOverHandler(d, _d.event);
+      }).on('mouseout', function (d) {
+        return _this2.props.mouseOutHandler(d, _d.event);
+      }).on('mousemove', function () {
+        return _this2.props.mouseMoveHandler(_d.event);
+      }).on('click', function (d) {
+        return _this2.props.clickHandler(d, _d.event);
       });
-      // .on('mouseover', (d) => mouseOverHandler(d, d3LastEvent))
-      // .on('mouseout', (d) => mouseOutHandler(d, d3LastEvent))
-      // .on('mousemove', () => mouseMoveHandler(d3LastEvent))
-      // .on('click', (d) => clickHandler(d, d3LastEvent));
     }
   }, {
     key: 'updateAxisX',
@@ -420,15 +407,15 @@ var ScatterplotChart = (function (_React$Component) {
 
       return _react2.default.createElement(
         'div',
-        { className: 'scatterplot_chart' + uid },
-        _react2.default.createElement(_radium.Style, { scopeSelector: '.scatterplot_chart' + uid, rules: (0, _lodash2.default)({}, defaultStyle, this.props.style) }),
+        { ref: this.uid, className: 'scatterplot_chart' + uid },
+        _react2.default.createElement(_radium.Style, { scopeSelector: '.scatterplot_chart' + uid, rules: (0, _lodash2.default)({}, _shared.defaultStyle, this.props.style, (0, _shared.getAxisStyles)(this.props.grid, this.props.verticalGrid, this.props.yAxisOrientRight)) }),
         node.toReact()
       );
     }
   }]);
 
   return ScatterplotChart;
-})(_react2.default.Component);
+}(_react2.default.Component);
 
 exports.default = ScatterplotChart;
 module.exports = exports['default'];
