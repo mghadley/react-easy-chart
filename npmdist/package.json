@@ -24,8 +24,6 @@
     "d3-shape": "^0.2.x",
     "lodash.merge": "^4.0.x",
     "radium": "^0.15.x",
-    "react": "^0.14.x",
-    "react-dom": "^0.14.x",
     "react-faux-dom": "^2.1.x"
   }
 }
