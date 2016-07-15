@@ -104,7 +104,7 @@ module.exports = (config) => {
       resolve: {
         alias: {
           sinon: 'sinon/pkg/sinon',
-          'react-easy-chart': modulesPath
+          'react-easy-chart-mghadley': modulesPath
         }
       },
       module: {
